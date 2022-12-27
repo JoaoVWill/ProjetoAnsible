@@ -1,0 +1,46 @@
+---
+- name: Instalação Minikube
+  hosts: test
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars:
+      itens:
+      - qemu-kvm
+      - libvirt-daemon-system
+      - bridge-utils
+      - libguestfs-tools
+      - genisoimage
+      - virtinst
+      - libosinfo-bin
+      - python3-pip
+      pip:
+      - openshift
+      - pyyaml
+      - kubernetes
+  tasks:
+      - name: Instalação de pré-requisitos minikube
+        apt:
+            name: "{{ itens }}"
+            state: latest      
+      
+      - name: Instalação do Minikube
+        apt:
+          deb: 'https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb'
+
+      - name: Instalar Kubectl
+        get_url:
+          url: https://dl.k8s.io/release/v1.25.0/bin/linux/amd64/kubectl
+          dest: /usr/bin/kubectl
+          mode: '0755'
+      
+      - name: Adicionar usuário ao grupo Libvirt
+        user:
+          name: ansible
+          comment: ansible
+          group: libvirt
+      
+      - name: Instalação de pré-requisitos com PIP
+        pip:
+          name: "{{ pip }}"
+          state: latest

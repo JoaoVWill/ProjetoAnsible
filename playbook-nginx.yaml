@@ -1,0 +1,21 @@
+#################################################
+#INSTALAÇÃO & CRIAÇÃO DE PÁGINA INICIAL DO NGINX#
+##################################################
+
+- hosts: worker
+  become: true
+  become_method: sudo
+  become_user: root    
+  tasks:
+      - name: Instalar o Nginx
+        apt:
+            name: nginx
+            update_cache: true
+      - name: Interrompe o Nginx
+        service:
+            name: nginx
+            state: stopped
+      - name: Iniciar o Nginx
+        service:
+            name: nginx
+            state: started

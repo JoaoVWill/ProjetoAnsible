@@ -1,0 +1,31 @@
+################################################
+### TESTE DE INSTALAÇÃO MINIKUBE COM ANSIBLE ###
+################################################
+
+---
+- hosts: test
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+      - name: Download de imagem do minikube
+        command: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+      - name: Descompactação do aquivo 
+        command: dpkg -i minikube_latest_amd64.deb
+      - name: Instalação de pré-requisitos minikube
+        apt:
+            name: "{{ itens }}"
+            state: latest
+        vars:
+          itens:
+          - qemu-kvm
+          - libivirt-daemon-system
+          - bridge-utils
+          - libguestfs-tools
+          - genisoimage
+          - virtinst
+          - libosinfo-bin
+      - name: Download do Kubectl
+        command: curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+      - name: Copia para o /usr/bin
+        command: cp /root/kubectl /usr/bin
